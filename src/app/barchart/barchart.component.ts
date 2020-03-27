@@ -26,22 +26,23 @@ export class BarchartComponent implements OnInit {
 
   ngAfterContentInit(): void {
     let element = document.getElementById('chart');
-    this.width = this.svgWidth - this.margin.left - this.margin.right;
-    this.height = this.svgHeight - this.margin.top - this.margin.bottom;
+    this.width = this.svgWidth + this.margin.left + this.margin.right;
+    this.height = this.svgHeight + this.margin.top + this.margin.bottom;
     this.svg = d3.select(element).append('svg')
-      .attr('width', this.width)
-      .attr('height', this.height);
+      .attr('width', this.width + 50)
+      .attr('height', this.height + 50);
 
     
     let data = [10,20,30,40,50];
+    // let data = [50,40,30,20,10];
 
     const yScale = d3.scaleLinear()
     .range([this.height, 0])
-    .domain([0, 50]);
+    .domain([0, d3.max(data)]);
     
     const xScale = d3.scaleLinear()
     .range([0, this.width])
-    .domain([0, 5]);
+    .domain([0, data.length]);
 
     var line = d3.line()
       .x(function(d, i) { return xScale(i)})
@@ -51,7 +52,7 @@ export class BarchartComponent implements OnInit {
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")"   );
 
       g.append("g")   
-      .attr("transform", "translate(0," + (this.height - this.margin.bottom) + ")")   
+      .attr("transform", "translate(0," + this.height + ")")   
       .call(d3.axisBottom(xScale));
 
       g.append("g")   
