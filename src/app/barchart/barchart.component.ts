@@ -25,7 +25,7 @@ export class BarchartComponent implements OnInit {
   ngOnInit(): void {}
 
   ngAfterContentInit(): void {
-    let element = document.getElementById('chart');
+    let element = document.getElementById('barchart');
     this.width = this.svgWidth + this.margin.left + this.margin.right;
     this.height = this.svgHeight + this.margin.top + this.margin.bottom;
     this.svg = d3.select(element).append('svg')
@@ -33,45 +33,62 @@ export class BarchartComponent implements OnInit {
       .attr('height', this.height + 50);
 
     
-    let data = [10,20,30,40,50];
+    let data = [{
+      val: 10,
+      label: 'PC1'
+    },{
+      val: 20,
+      label: 'PC2'
+    },{
+      val: 30,
+      label: 'PC3'
+    },{
+      val: 40,
+      label: 'PC4'
+    },{
+      val: 50,
+      label: 'PC5'
+    }];
     // let data = [50,40,30,20,10];
 
     const yScale = d3.scaleLinear()
     .range([this.height, 0])
-    .domain([0, d3.max(data)]);
+    .domain([0, d3.max(data, (d) => d.val)]);
     
-    const xScale = d3.scaleLinear()
+    const xScale = d3.scaleBand()
     .range([0, this.width])
-    .domain([0, data.length]);
+    .domain(data.map((d) => d.label))
+    .padding(0.1);
 
-    var line = d3.line()
-      .x(function(d, i) { return xScale(i)})
-      .y(function(d) { return yScale(d)});   
-
-      var g = this.svg.append("g")   
+      var chart = this.svg.append("g")   
       .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")"   );
 
-      g.append("g")   
+      chart.append("g")   
       .attr("transform", "translate(0," + this.height + ")")   
       .call(d3.axisBottom(xScale));
 
-      g.append("g")   
-      .call(d3.axisLeft(yScale))   
-      .append("text")
-      .attr("fill", "#000")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em");
+      chart.append("g")   
+      .call(d3.axisLeft(yScale))   ;
+      // .append("text")
+      // .attr("fill", "#000")
+      // .attr("transform", "rotate(-90)")
+      // .attr("y", 6)
+      // .attr("dy", "0.71em");
 
-      g.append("path")
-      .datum(data)
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-linejoin", "round")
-      .attr("stroke-linecap", "round")
-      .attr("stroke-width", 1.5)
-      .attr("d", line);
 
+      const barGroups = chart.selectAll()
+      .data(data)
+      .enter()
+      .append('g');
+
+      barGroups
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('x', (d) => xScale(d.label))
+      .attr('y', (d) => yScale(d.val))
+      .attr('height', (d) => this.height - yScale(d.val))
+      .attr('width', xScale.bandwidth());
+  
   }
 
 }
