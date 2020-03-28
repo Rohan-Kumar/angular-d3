@@ -9,20 +9,20 @@ import * as d3 from 'd3';
 export class BarchartComponent implements OnInit {
 
   private svgWidth = 600;
-  private svgHeight = 400;   
-  private margin = { 
-    top: 10, 
-    right: 20, 
-    bottom: 30, 
-    left: 20 
-  };   
+  private svgHeight = 400;
+  private margin = {
+    top: 10,
+    right: 20,
+    bottom: 30,
+    left: 20
+  };
   private width;
   private height;
-  private svg: any; 
+  private svg: any;
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngAfterContentInit(): void {
     let element = document.getElementById('barchart');
@@ -32,63 +32,56 @@ export class BarchartComponent implements OnInit {
       .attr('width', this.width + 50)
       .attr('height', this.height + 50);
 
-    
+
     let data = [{
       val: 10,
       label: 'PC1'
-    },{
+    }, {
       val: 20,
       label: 'PC2'
-    },{
+    }, {
       val: 30,
       label: 'PC3'
-    },{
+    }, {
       val: 40,
       label: 'PC4'
-    },{
+    }, {
       val: 50,
       label: 'PC5'
     }];
-    // let data = [50,40,30,20,10];
 
     const yScale = d3.scaleLinear()
-    .range([this.height, 0])
-    .domain([0, d3.max(data, (d) => d.val)]);
-    
+      .range([this.height, 0])
+      .domain([0, d3.max(data, (d) => d.val)]);
+
     const xScale = d3.scaleBand()
-    .range([0, this.width])
-    .domain(data.map((d) => d.label))
-    .padding(0.1);
+      .range([0, this.width])
+      .domain(data.map((d) => d.label))
+      .padding(0.1);
 
-      var chart = this.svg.append("g")   
-      .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")"   );
+    var chart = this.svg.append("g")
+      .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
 
-      chart.append("g")   
-      .attr("transform", "translate(0," + this.height + ")")   
+    chart.append("g")
+      .attr("transform", "translate(0," + this.height + ")")
       .call(d3.axisBottom(xScale));
 
-      chart.append("g")   
-      .call(d3.axisLeft(yScale))   ;
-      // .append("text")
-      // .attr("fill", "#000")
-      // .attr("transform", "rotate(-90)")
-      // .attr("y", 6)
-      // .attr("dy", "0.71em");
+    chart.append("g")
+      .call(d3.axisLeft(yScale));
 
-
-      const barGroups = chart.selectAll()
+    const barGroups = chart.selectAll()
       .data(data)
       .enter()
       .append('g');
 
-      barGroups
+    barGroups
       .append('rect')
       .attr('class', 'bar')
       .attr('x', (d) => xScale(d.label))
       .attr('y', (d) => yScale(d.val))
       .attr('height', (d) => this.height - yScale(d.val))
       .attr('width', xScale.bandwidth());
-  
+
   }
 
 }
